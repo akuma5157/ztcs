@@ -1,0 +1,23 @@
+---
+#
+# Install/run logrotate
+#
+
+
+- name: Install logrotate
+  apt: name={{ item }} state=present
+  become: true
+  with_items:
+    - logrotate
+
+- name: Copy nginx conf
+  copy:
+    src: "{{ role_path }}/files/nginx"
+    dest: /etc/logrotate.d
+    mode: 0644
+
+- name: enable logrotate crontab
+  cron: 
+    minute: */5
+    job: "logrotate -f /etc/logrotate.d/nginx"
+
